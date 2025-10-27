@@ -277,7 +277,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           <img 
             src="/protect.png" 
             alt="ProteQ Logo" 
-            className="w-40 h-40 object-contain filter drop-shadow-[0_0_30px_rgba(139,92,246,0.7)]"
+            className="w-24 h-24 object-contain filter drop-shadow-[0_0_30px_rgba(139,92,246,0.7)]"
           />
         </motion.div>
 

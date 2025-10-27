@@ -29,7 +29,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const API_BASE_URL = 'http://localhost:8000';
+  const USE_OFFLINE_MODE = false; // Will use real backend
+  const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -78,25 +79,32 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     try {
       if (isRegister) {
         // Registration
-        const response = await fetch(`${API_BASE_URL}/auth/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
+        if (USE_OFFLINE_MODE) {
+          // Offline mode - save to localStorage
+          const users = JSON.parse(localStorage.getItem('users') || '[]');
+          
+          // Check if username already exists
+          if (users.find((u: any) => u.username === formData.username)) {
+            throw new Error('Username already exists');
+          }
+          
+          // Check if email already exists
+          if (users.find((u: any) => u.email === formData.email)) {
+            throw new Error('Email already exists');
+          }
+          
+          // Create new user
+          const newUser = {
+            id: Date.now(),
             full_name: formData.fullName,
             email: formData.email,
             username: formData.username,
-            password: formData.password,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Registration failed');
-        }
-
-        const user = await response.json();
+            password: formData.password, // In real app, this would be hashed
+            role: 'user'
+          };
+          
+          users.push(newUser);
+          localStorage.setItem('users', JSON.stringify(users));
         
         // Success! Account created and saved to database
         toast.success('✅ Registration successful! Your account has been created.', {
@@ -116,43 +124,101 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           password: '', 
           confirmPassword: '' 
         });
+        } else {
+          // With backend
+          const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              full_name: formData.fullName,
+              email: formData.email,
+              username: formData.username,
+              password: formData.password,
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Registration failed');
+          }
+        
+          toast.success('✅ Registration successful! Your account has been created.', {
+            description: 'Please login with your credentials',
+            duration: 4000,
+          });
+          
+          setIsRegister(false);
+          const savedUsername = formData.username;
+          setFormData({ 
+            fullName: '', 
+            email: '', 
+            username: savedUsername, 
+            password: '', 
+            confirmPassword: '' 
+          });
+        }
       } else {
         // Login
-        const formDataLogin = new FormData();
-        formDataLogin.append('username', formData.username);
-        formDataLogin.append('password', formData.password);
+        if (USE_OFFLINE_MODE) {
+          // Offline mode - check localStorage
+          const users = JSON.parse(localStorage.getItem('users') || '[]');
+          const user = users.find((u: any) => 
+            u.username === formData.username && u.password === formData.password
+          );
+          
+          if (!user) {
+            throw new Error('Invalid username or password');
+          }
+          
+          // Create mock token
+          const token = 'offline_token_' + Date.now();
+          
+          // Store auth data
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          toast.success('Login successful!');
+          onLogin(token, user);
+        } else {
+          // With backend
+          const formDataLogin = new FormData();
+          formDataLogin.append('username', formData.username);
+          formDataLogin.append('password', formData.password);
 
-        const response = await fetch(`${API_BASE_URL}/auth/login`, {
-          method: 'POST',
-          body: formDataLogin,
-        });
+          const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            body: formDataLogin,
+          });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.detail || 'Login failed');
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || 'Login failed');
+          }
+
+          const tokenData = await response.json();
+          
+          // Get user info
+          const userResponse = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: {
+              'Authorization': `Bearer ${tokenData.access_token}`,
+            },
+          });
+
+          if (!userResponse.ok) {
+            throw new Error('Failed to get user information');
+          }
+
+          const user = await userResponse.json();
+          
+          // Store token in localStorage
+          localStorage.setItem('authToken', tokenData.access_token);
+          localStorage.setItem('user', JSON.stringify(user));
+          
+          toast.success('Login successful!');
+          onLogin(tokenData.access_token, user);
         }
-
-        const tokenData = await response.json();
-        
-        // Get user info
-        const userResponse = await fetch(`${API_BASE_URL}/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${tokenData.access_token}`,
-          },
-        });
-
-        if (!userResponse.ok) {
-          throw new Error('Failed to get user information');
-        }
-
-        const user = await userResponse.json();
-        
-        // Store token in localStorage
-        localStorage.setItem('authToken', tokenData.access_token);
-        localStorage.setItem('user', JSON.stringify(user));
-        
-        toast.success('Login successful!');
-        onLogin(tokenData.access_token, user);
       }
     } catch (error) {
       console.error('Auth error:', error);

@@ -29,7 +29,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const USE_OFFLINE_MODE = false; // Will use real backend
+  const USE_OFFLINE_MODE = true; // Offline mode for demo - no backend needed
   const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
   const validateForm = () => {

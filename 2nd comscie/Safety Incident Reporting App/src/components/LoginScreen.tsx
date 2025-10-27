@@ -286,8 +286,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             className="relative"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-violet-500 to-cyan-500 rounded-full blur-xl opacity-50" />
-            <div className="relative bg-gradient-to-br from-blue-500 via-violet-500 to-cyan-500 p-8 rounded-full">
-              <Shield className="w-20 h-20 text-white" />
+            <div className="relative p-8">
+              <Shield className="w-20 h-20 text-white drop-shadow-[0_0_15px_rgba(139,92,246,0.8)]" />
             </div>
           </motion.div>
         </motion.div>
@@ -299,7 +299,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           transition={{ delay: 0.3 }}
           className="text-center text-white mb-2"
         >
-          SafeGuard AI
+          ProteQ
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}

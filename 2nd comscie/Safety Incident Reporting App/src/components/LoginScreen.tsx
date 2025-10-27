@@ -277,24 +277,16 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           <img 
             src="/protect.png" 
             alt="ProteQ Logo" 
-            className="w-24 h-24 object-contain filter drop-shadow-[0_0_30px_rgba(139,92,246,0.7)]"
+            className="w-32 h-32 object-contain filter drop-shadow-[0_0_30px_rgba(139,92,246,0.7)]"
           />
         </motion.div>
 
         {/* Tagline */}
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="text-center text-white mb-2"
-        >
-          ProteQ
-        </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center bg-gradient-to-r from-blue-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent mb-8"
+          transition={{ delay: 0.3 }}
+          className="text-center bg-gradient-to-r from-blue-400 via-violet-400 to-cyan-400 bg-clip-text text-transparent mb-8 text-lg"
         >
           Your Personal Safety Companion
         </motion.p>

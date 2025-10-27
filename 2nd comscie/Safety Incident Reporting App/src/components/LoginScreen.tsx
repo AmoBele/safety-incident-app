@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Shield, ArrowRight, Globe, Mic, AlertCircle } from 'lucide-react';
+import { ArrowRight, Globe, Mic, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from 'sonner';
@@ -286,8 +286,12 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             className="relative"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-violet-500 to-cyan-500 rounded-full blur-xl opacity-50" />
-            <div className="relative p-8">
-              <Shield className="w-20 h-20 text-white drop-shadow-[0_0_15px_rgba(139,92,246,0.8)]" />
+            <div className="relative">
+              <img 
+                src="/proteq-logo.png" 
+                alt="ProteQ Logo" 
+                className="w-32 h-32 object-contain drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]"
+              />
             </div>
           </motion.div>
         </motion.div>

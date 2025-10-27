@@ -267,33 +267,18 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md relative z-10"
       >
-        {/* Shield Logo Animation */}
+        {/* ProteQ Logo */}
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', duration: 1 }}
           className="flex justify-center mb-8"
         >
-          <motion.div
-            animate={{
-              boxShadow: [
-                '0 0 20px rgba(34, 211, 238, 0.5)',
-                '0 0 60px rgba(139, 92, 246, 0.8)',
-                '0 0 20px rgba(34, 211, 238, 0.5)',
-              ],
-            }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="relative"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-violet-500 to-cyan-500 rounded-full blur-xl opacity-50" />
-            <div className="relative">
-              <img 
-                src="/proteq-logo.png" 
-                alt="ProteQ Logo" 
-                className="w-32 h-32 object-contain drop-shadow-[0_0_20px_rgba(139,92,246,0.6)]"
-              />
-            </div>
-          </motion.div>
+          <img 
+            src="/protect.png" 
+            alt="ProteQ Logo" 
+            className="w-40 h-40 object-contain filter drop-shadow-[0_0_30px_rgba(139,92,246,0.7)]"
+          />
         </motion.div>
 
         {/* Tagline */}
